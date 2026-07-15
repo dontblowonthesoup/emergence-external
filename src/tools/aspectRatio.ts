@@ -9,14 +9,13 @@ export interface SizePreset {
 }
 
 export const SIZE_PRESETS: SizePreset[] = [
-  { id: "1920x1080", label: "1920×1080", w: 1920, h: 1080 },
-  { id: "2560x1440", label: "2560×1440", w: 2560, h: 1440 },
-  { id: "1440x1080", label: "1440×1080", w: 1440, h: 1080 },
-  { id: "1080x1080", label: "1080×1080", w: 1080, h: 1080 },
-  { id: "1080x1920", label: "1080×1920", w: 1080, h: 1920 },
+  { id: "1920x1080", label: "16:9", w: 1920, h: 1080 },
+  { id: "1440x1080", label: "4:3", w: 1440, h: 1080 },
+  { id: "1080x1080", label: "1:1", w: 1080, h: 1080 },
+  { id: "1080x1920", label: "9:16", w: 1080, h: 1920 },
 ];
 
-export const DEFAULT_PRESET_ID = "2560x1440";
+export const DEFAULT_PRESET_ID = "1920x1080";
 
 export type CanvasSizeConfig =
   | { mode: "preset"; presetId: string }
@@ -50,7 +49,7 @@ export function resolveExportDims(config: CanvasSizeConfig): { w: number; h: num
   if (config.mode === "custom") {
     return clampCustomDims(config.w, config.h);
   }
-  const preset = SIZE_PRESETS.find((p) => p.id === config.presetId) ?? SIZE_PRESETS[1];
+  const preset = SIZE_PRESETS.find((p) => p.id === config.presetId) ?? SIZE_PRESETS[0];
   return { w: preset.w, h: preset.h };
 }
 
@@ -59,7 +58,7 @@ export function labelForConfig(config: CanvasSizeConfig): string {
     const { w, h } = clampCustomDims(config.w, config.h);
     return `${w}×${h}`;
   }
-  const preset = SIZE_PRESETS.find((p) => p.id === config.presetId) ?? SIZE_PRESETS[1];
+  const preset = SIZE_PRESETS.find((p) => p.id === config.presetId) ?? SIZE_PRESETS[0];
   return preset.label;
 }
 

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import logo from './assets/copo-logo.png';
 import wordmark from './assets/copo-watermark.png';
 import RootBrush from './tools/RootBrush';
 import FlowField from './tools/FlowField';
@@ -32,11 +31,11 @@ export default function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="app-header__brand">
-          <img src={logo} alt="" className="app-header__logo" aria-hidden="true" />
-          <div className="app-header__text">
-            <img src={wordmark} alt="COPO" className="app-header__wordmark" />
-            <span className="app-header__subtitle">Emergence</span>
-          </div>
+          <img
+            src="/emergence-logo.png"
+            alt="Emergence"
+            className="app-header__logo"
+          />
         </div>
       </header>
 

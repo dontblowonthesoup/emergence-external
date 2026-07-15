@@ -22,7 +22,7 @@ function customDraftFrom(config: CanvasSizeConfig): { w: string; h: string } {
   if (config.mode === "custom") {
     return { w: String(config.w), h: String(config.h) };
   }
-  const preset = SIZE_PRESETS.find((p) => p.id === config.presetId) ?? SIZE_PRESETS[1];
+  const preset = SIZE_PRESETS.find((p) => p.id === config.presetId) ?? SIZE_PRESETS[0];
   return { w: String(preset.w), h: String(preset.h) };
 }
 
