@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import snapshotUrl from "../data/sf-bay-roads.json?url";
 import ExportButtons from "../components/ExportButtons";
+import ParamValueInput from "../components/ParamValueInput";
 import RecordButton from "../components/RecordButton";
 import { useCanvasRecorder, useStopRecordWhenAnimatingEnds } from "../hooks/useCanvasRecorder";
 import { EXPORT_WIDTH } from "./aspectRatio";
@@ -672,10 +673,15 @@ export default function RoadColors() {
     <label className="tool-param-row">
       <span className="tool-param-row__header">
         <span className="tool-param-row__label">{label}</span>
-        <output className="tool-param-row__value">
-          {value}
-          {suffix}
-        </output>
+        <ParamValueInput
+          value={value}
+          min={min}
+          max={max}
+          step={stepv}
+          suffix={suffix}
+          aria-label={label}
+          onChange={onChange}
+        />
       </span>
       <input
         type="range"

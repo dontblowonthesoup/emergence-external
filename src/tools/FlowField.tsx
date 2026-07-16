@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AspectRatioControl from "../components/AspectRatioControl";
 import ExportButtons from "../components/ExportButtons";
+import ParamValueInput from "../components/ParamValueInput";
 import RecordButton from "../components/RecordButton";
 import { useAnimProgress, useCanvasRecorder, useStopRecordWhenAnimatingEnds } from "../hooks/useCanvasRecorder";
 import { useCanvasDimensions } from "../hooks/useCanvasDimensions";
@@ -8,11 +9,9 @@ import { renderPngBlob, scaleStrokeParams } from "./exportCanvas";
 import { safeColor } from "./specimenTreeCore";
 import {
   BG,
-  buildEmergenceRoots,
   buildFlowSVG,
   buildNoiseField,
   DEFAULT_FLOW,
-  EMERGE_PRESET,
   FH,
   FLOW_HINTS,
   FLOW_LABELS,
@@ -20,7 +19,6 @@ import {
   FW,
   INK,
   randomFlowParams,
-  SLIDER_KEYS_EMERGE,
   SLIDER_KEYS_FIELD,
   SLIDER_KEYS_LINE,
   traceStreamlines,
@@ -35,10 +33,6 @@ export default function FlowField() {
   const { w, h, exportDims, pxScale, config, setConfig, resetSize } = useCanvasDimensions(FW, FH);
   const [params, setParams] = useState<FlowParams>(DEFAULT_FLOW);
   const exportParams = useMemo(() => scaleStrokeParams(params, pxScale), [params, pxScale]);
-  const [emerge, setEmerge] = useState(false);
-  // Flow-mode params snapshot: switching Emerge on loads a sketch preset, and
-  // switching back restores whatever the user had in Flow mode.
-  const preEmergeParams = useRef<FlowParams | null>(null);
   const [ink, setInk] = useState(INK);
   const [background, setBackground] = useState(BG);
   const [growing, setGrowing] = useState(false);
@@ -46,19 +40,17 @@ export default function FlowField() {
   const [fade, setFade] = useState(false);
 
   const lines = useMemo(() => {
-    if (emerge) return buildEmergenceRoots(w, h, params);
     return traceStreamlines(buildNoiseField(w, h, params), w, h, params);
-  }, [params, emerge, w, h]);
+  }, [params, w, h]);
 
   const exportLines = useMemo(() => {
-    if (emerge) return buildEmergenceRoots(exportDims.w, exportDims.h, exportParams);
     return traceStreamlines(
       buildNoiseField(exportDims.w, exportDims.h, exportParams),
       exportDims.w,
       exportDims.h,
       exportParams,
     );
-  }, [exportParams, emerge, exportDims]);
+  }, [exportParams, exportDims]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -169,29 +161,10 @@ export default function FlowField() {
 
   const regenerate = () => setParams((prev) => randomFlowParams(prev));
 
-  // Enter Emerge: snapshot the current Flow params and load the sketch preset.
-  // Leave Emerge: restore the snapshot so Flow mode is untouched.
-  const enableEmerge = () => {
-    if (emerge) return;
-    preEmergeParams.current = params;
-    setParams((prev) => ({ ...prev, ...EMERGE_PRESET }));
-    setEmerge(true);
-  };
-  const disableEmerge = () => {
-    if (!emerge) return;
-    if (preEmergeParams.current) {
-      setParams(preEmergeParams.current);
-      preEmergeParams.current = null;
-    }
-    setEmerge(false);
-  };
-
   const reset = () => {
     setGrowing(false);
     setGrowth(1);
     setParams(DEFAULT_FLOW);
-    setEmerge(false);
-    preEmergeParams.current = null;
     setInk(INK);
     setBackground(BG);
     setFade(false);
@@ -252,7 +225,14 @@ export default function FlowField() {
       >
         <span className="tool-param-row__header">
           <span className="tool-param-row__label">{FLOW_LABELS[key]}</span>
-          <output className="tool-param-row__value">{value}</output>
+          <ParamValueInput
+            value={value}
+            min={min}
+            max={max}
+            step={step}
+            aria-label={FLOW_LABELS[key]}
+            onChange={(v) => updateParam(key, v as FlowParams[typeof key])}
+          />
         </span>
         <input
           type="range"
@@ -331,46 +311,15 @@ export default function FlowField() {
         <aside className="specimen-tree__controls">
           <div className="specimen-tree__group">
             <span className="specimen-tree__group-title">field</span>
-            <div className="specimen-tree__shapes">
-              <button
-                type="button"
-                className={`btn specimen-tree__shape${emerge ? " is-active" : ""}`}
-                onClick={enableEmerge}
-                title="Ridges fan out from one point, like the root brush"
-              >
-                Emerge
-              </button>
-              <button
-                type="button"
-                className={`btn specimen-tree__shape${!emerge ? " is-active" : ""}`}
-                onClick={disableEmerge}
-                title="Ridges flow across the whole frame"
-              >
-                Flow
-              </button>
-            </div>
             <div className="specimen-tree__sliders">
-              {/* Emerge ignores drift (the field radiates from the crown, not a
-                  global direction), so hide that slider in Emerge mode. */}
-              {(emerge
-                ? SLIDER_KEYS_FIELD.filter((k) => k !== "drift")
-                : SLIDER_KEYS_FIELD
-              ).map(renderRow)}
-              {emerge && SLIDER_KEYS_EMERGE.map(renderRow)}
+              {SLIDER_KEYS_FIELD.map(renderRow)}
             </div>
           </div>
 
           <div className="specimen-tree__group">
             <span className="specimen-tree__group-title">lines</span>
             <div className="specimen-tree__sliders">
-              {/* Emerge builds roots by count/morph, not by streamline spacing,
-                  step, or seed scatter — those do nothing here, so hide them. */}
-              {(emerge
-                ? SLIDER_KEYS_LINE.filter(
-                    (k) => k !== "spacing" && k !== "stepLen" && k !== "jitter",
-                  )
-                : SLIDER_KEYS_LINE
-              ).map(renderRow)}
+              {SLIDER_KEYS_LINE.map(renderRow)}
             </div>
           </div>
 

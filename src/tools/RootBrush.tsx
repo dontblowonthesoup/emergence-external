@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ArenaImagePicker from "../components/ArenaImagePicker";
 import AspectRatioControl from "../components/AspectRatioControl";
 import ExportButtons from "../components/ExportButtons";
+import ParamValueInput from "../components/ParamValueInput";
 import RecordButton from "../components/RecordButton";
 import { useAnimProgress, useCanvasRecorder, useStopRecordWhenAnimatingEnds } from "../hooks/useCanvasRecorder";
 import { useCanvasDimensions } from "../hooks/useCanvasDimensions";
-import { loadArenaImage } from "../sources/arena";
 import { renderMagnifiedPngBlob } from "./exportCanvas";
 import { safeColor } from "./specimenTreeCore";
 import {
@@ -66,8 +65,6 @@ export default function RootBrush() {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [growing, setGrowing] = useState(false);
   const [growth, setGrowth, growthRef] = useAnimProgress(1);
-  const [showArena, setShowArena] = useState(false);
-  const [arenaError, setArenaError] = useState("");
 
   const buf = useMemo(
     () => (image ? sampleLuminance(image, w, h) : null),
@@ -249,17 +246,6 @@ export default function RootBrush() {
     img.src = url;
   };
 
-  const handleArenaSelect = async (url: string) => {
-    setShowArena(false);
-    setArenaError("");
-    try {
-      const img = await loadArenaImage(url);
-      setImage(img);
-    } catch (e) {
-      setArenaError((e as Error).message);
-    }
-  };
-
   const reset = () => {
     setGrowing(false);
     setGrowth(1);
@@ -328,7 +314,14 @@ export default function RootBrush() {
       >
         <span className="tool-param-row__header">
           <span className="tool-param-row__label">{ROOT_LABELS[key]}</span>
-          <output className="tool-param-row__value">{value}</output>
+          <ParamValueInput
+            value={value}
+            min={min}
+            max={max}
+            step={step}
+            aria-label={ROOT_LABELS[key]}
+            onChange={(v) => updateParam(key, v as RootParams[typeof key])}
+          />
         </span>
         <input
           type="range"
@@ -388,23 +381,6 @@ export default function RootBrush() {
             disabled={!hasOutput}
           />
           <RecordButton recording={recorder.recording} supported={recorder.supported} onStart={startRecord} onStop={stopRecord} />
-          <button
-            type="button"
-            className={`btn${isFullscreen ? " is-active" : ""}`}
-            onClick={toggleFullscreen}
-            title={isFullscreen ? "Exit full screen" : "View full screen"}
-          >
-            {isFullscreen ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 3v3a3 3 0 0 1-3 3H3M21 9h-3a3 3 0 0 1-3-3V3M3 15h3a3 3 0 0 1 3 3v3M15 21v-3a3 3 0 0 1 3-3h3" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3" />
-              </svg>
-            )}
-            {isFullscreen ? "Exit" : "Full screen"}
-          </button>
         </div>
       </header>
 
@@ -448,20 +424,6 @@ export default function RootBrush() {
               </span>
             )}
           </label>
-
-          <button
-            type="button"
-            className="btn specimen-tree__arena-btn"
-            onClick={() => {
-              setArenaError("");
-              setShowArena(true);
-            }}
-          >
-            Browse Are.na
-          </button>
-          {arenaError && (
-            <p className="specimen-tree__arena-error">{arenaError}</p>
-          )}
 
           {image && (
             <div className="specimen-tree__group">
@@ -548,6 +510,23 @@ export default function RootBrush() {
           }
         >
           <canvas ref={canvasRef} className="specimen-tree__canvas" />
+          <button
+            type="button"
+            className={`canvas-fs-btn${isFullscreen ? " is-active" : ""}`}
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit full screen" : "View full screen"}
+            aria-label={isFullscreen ? "Exit full screen" : "View full screen"}
+          >
+            {isFullscreen ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 3v3a3 3 0 0 1-3 3H3M21 9h-3a3 3 0 0 1-3-3V3M3 15h3a3 3 0 0 1 3 3v3M15 21v-3a3 3 0 0 1 3-3h3" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3" />
+              </svg>
+            )}
+          </button>
           {isFullscreen && (
             <div className="canvas-zoom" role="group" aria-label="Zoom">
               <button
@@ -586,13 +565,6 @@ export default function RootBrush() {
           )}
         </div>
       </section>
-
-      {showArena && (
-        <ArenaImagePicker
-          onSelect={handleArenaSelect}
-          onClose={() => setShowArena(false)}
-        />
-      )}
     </>
   );
 }

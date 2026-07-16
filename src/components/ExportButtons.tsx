@@ -17,8 +17,8 @@ interface ExportButtonsProps {
 }
 
 /**
- * Shared export controls for every generative tool: a PNG dropdown offering
- * "with background" or "transparent", and an SVG button (always transparent).
+ * Shared export control: one Export menu with PNG (background / transparent) and SVG.
+ * Aspect ratio and Record stay as separate header controls.
  */
 export default function ExportButtons({ onPNG, onSVG, disabled }: ExportButtonsProps) {
   const [open, setOpen] = useState(false);
@@ -34,59 +34,64 @@ export default function ExportButtons({ onPNG, onSVG, disabled }: ExportButtonsP
   }, [open]);
 
   return (
-    <>
-      <div className="export-menu" ref={ref}>
-        <button
-          type="button"
-          className="btn"
-          disabled={disabled}
-          aria-haspopup="menu"
-          aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
-        >
-          <DownloadIcon />
-          PNG
-          <svg
-            className="export-menu__caret"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
-        {open && (
-          <div className="export-menu__list" role="menu">
-            <button
-              type="button"
-              role="menuitem"
-              className="export-menu__item"
-              onClick={() => {
-                setOpen(false);
-                onPNG(false);
-              }}
-            >
-              With background
-            </button>
-            <button
-              type="button"
-              role="menuitem"
-              className="export-menu__item"
-              onClick={() => {
-                setOpen(false);
-                onPNG(true);
-              }}
-            >
-              Transparent
-            </button>
-          </div>
-        )}
-      </div>
-      <button type="button" className="btn" disabled={disabled} onClick={onSVG}>
+    <div className="export-menu" ref={ref}>
+      <button
+        type="button"
+        className="btn"
+        disabled={disabled}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
         <DownloadIcon />
-        SVG
+        Export
+        <svg
+          className="export-menu__caret"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
       </button>
-    </>
+      {open && (
+        <div className="export-menu__list" role="menu">
+          <button
+            type="button"
+            role="menuitem"
+            className="export-menu__item"
+            onClick={() => {
+              setOpen(false);
+              onPNG(false);
+            }}
+          >
+            PNG with background
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className="export-menu__item"
+            onClick={() => {
+              setOpen(false);
+              onPNG(true);
+            }}
+          >
+            PNG transparent
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className="export-menu__item"
+            onClick={() => {
+              setOpen(false);
+              onSVG();
+            }}
+          >
+            SVG
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

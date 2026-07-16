@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AspectRatioControl from "../components/AspectRatioControl";
 import ExportButtons from "../components/ExportButtons";
+import ParamValueInput from "../components/ParamValueInput";
 import RecordButton from "../components/RecordButton";
 import { useAnimProgress, useCanvasRecorder, useStopRecordWhenAnimatingEnds } from "../hooks/useCanvasRecorder";
 import { useCanvasDimensions } from "../hooks/useCanvasDimensions";
@@ -199,7 +200,14 @@ export default function Jagged() {
       <label key={key} className="tool-param-row has-tip" data-tip={JAGGED_HINTS[key]}>
         <span className="tool-param-row__header">
           <span className="tool-param-row__label">{JAGGED_LABELS[key]}</span>
-          <output className="tool-param-row__value">{value}</output>
+          <ParamValueInput
+            value={value}
+            min={min}
+            max={max}
+            step={step}
+            aria-label={JAGGED_LABELS[key]}
+            onChange={(v) => updateParam(key, v as JaggedParams[typeof key])}
+          />
         </span>
         <input
           type="range"

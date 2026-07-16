@@ -10,10 +10,7 @@
  * --hero on --ink (or --ink on --hero).
  *
  * Typography:
- *   - Financier Display — display headings (contemporary editorial serif;
- *     replaces Garamond per feedback)
- *   - Zichtbaar Regular / Demibold — subheadings & UI labels
- *   - Manrope — body copy
+ *   - Helvetica Neue — display, UI, and body
  */
 
 :root {
@@ -65,9 +62,9 @@
   --copo-earth-red: var(--c-clay);
 
   /* ── Typography ────────────────────────────────────────────── */
-  --font-display: 'Financier Display', Georgia, 'Times New Roman', serif;
-  --font-subhead: 'Zichtbaar', system-ui, sans-serif;
-  --font-body: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-subhead: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   /* ── Layout ────────────────────────────────────────────────── */
   --border-radius-lg: 12px;

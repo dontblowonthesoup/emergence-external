@@ -61,7 +61,10 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        <img src={wordmark} alt="Company Policy" className="app-footer__wordmark" />
+        <p className="app-footer__credit">
+          Created by
+          <img src={wordmark} alt="Company Policy" className="app-footer__wordmark" />
+        </p>
       </footer>
     </div>
   );

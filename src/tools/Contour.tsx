@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ArenaImagePicker from "../components/ArenaImagePicker";
 import AspectRatioControl from "../components/AspectRatioControl";
 import ExportButtons from "../components/ExportButtons";
+import ParamValueInput from "../components/ParamValueInput";
 import RecordButton from "../components/RecordButton";
 import { useAnimProgress, useCanvasRecorder, useStopRecordWhenAnimatingEnds } from "../hooks/useCanvasRecorder";
 import { useCanvasDimensions } from "../hooks/useCanvasDimensions";
@@ -253,7 +254,14 @@ export default function Contour() {
       >
         <span className="tool-param-row__header">
           <span className="tool-param-row__label">{CONTOUR_LABELS[key]}</span>
-          <output className="tool-param-row__value">{value}</output>
+          <ParamValueInput
+            value={value}
+            min={min}
+            max={max}
+            step={step}
+            aria-label={CONTOUR_LABELS[key]}
+            onChange={(v) => updateParam(key, v as ContourParams[typeof key])}
+          />
         </span>
         <input
           type="range"

@@ -1,4 +1,3 @@
-@import './brand/fonts.css';
 @import './brand/tokens.css';
 
 *,
@@ -509,6 +508,10 @@ button {
   flex-wrap: wrap;
 }
 
+.tool-page__header--row .btn {
+  font-weight: 400;
+}
+
 .tool-page__eyebrow {
   font-family: var(--font-subhead);
   font-size: 0.6875rem;
@@ -564,8 +567,7 @@ button {
   font-family: var(--font-subhead);
   font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
@@ -586,7 +588,7 @@ button {
   height: 16px;
 }
 
-/* Shared PNG export dropdown */
+/* Shared export dropdown (PNG / SVG) */
 
 .export-menu {
   position: relative;
@@ -621,9 +623,8 @@ button {
   color: var(--ink);
   font-family: var(--font-subhead);
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   text-align: left;
   cursor: pointer;
@@ -658,9 +659,8 @@ button {
 .export-menu__custom-label {
   font-family: var(--font-subhead);
   font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--ink-muted, var(--ink));
   opacity: 0.7;
 }
@@ -703,9 +703,8 @@ button {
   color: var(--ink);
   font-family: var(--font-subhead);
   font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   cursor: pointer;
 }
 
@@ -783,7 +782,53 @@ button {
   cursor: help;
 }
 
+.tool-param-row__value-wrap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
 .tool-param-row__value {
+  box-sizing: content-box;
+  min-width: 3ch;
+  margin: 0;
+  padding: 1px 3px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  cursor: text;
+  transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+
+.tool-param-row__value:hover {
+  border-color: var(--hairline, #d8d4cc);
+  color: var(--ink);
+}
+
+.tool-param-row__value:focus {
+  outline: none;
+  border-color: var(--copo-blue, #3a6ea5);
+  background: var(--paper, #fff);
+  color: var(--ink);
+}
+
+.tool-param-row__value::-webkit-outer-spin-button,
+.tool-param-row__value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tool-param-row__value[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.tool-param-row__suffix {
   color: var(--ink-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -1098,6 +1143,69 @@ button {
      follows the chosen aspect ratio. Falls back to the legacy tree ratio. */
   aspect-ratio: var(--canvas-ar-w, 680) / var(--canvas-ar-h, 580);
   display: block;
+}
+
+.specimen-tree__canvas-wrap {
+  position: relative;
+}
+
+/* Icon control — bottom-right of the canvas panel; shows on hover / focus */
+.canvas-fs-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-elevated);
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.canvas-fs-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.specimen-tree__canvas-wrap:hover .canvas-fs-btn,
+.canvas-fs-btn:focus-visible,
+.specimen-tree__canvas-wrap.is-fullscreen .canvas-fs-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.canvas-fs-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--copo-white);
+}
+
+.canvas-fs-btn.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--copo-white);
+}
+
+.canvas-fs-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Full-screen: keep exit pinned to the viewport corner (wrap is fixed/fullscreen) */
+.specimen-tree__canvas-wrap.is-fullscreen .canvas-fs-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
 }
 
 /* Full-screen preview: the wrapper fills the screen and the canvas is centered
@@ -1493,6 +1601,18 @@ button {
 .app-footer {
   padding: 20px 32px;
   border-top: 1px solid var(--border);
+}
+
+.app-footer__credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
 }
 
 .app-footer__wordmark {
