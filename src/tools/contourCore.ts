@@ -8,7 +8,7 @@ import { makeFade, strokeFaded, svgFadedPaths } from "./dissolveFade";
 export const CW = 680;
 export const CH = 580;
 export const INK = "#00280F";
-export const BG = "#F8FFEE";
+export const BG = "#EBFADC";
 
 /**
  * Topographic contour lines. A domain-warped simplex field is sampled onto a

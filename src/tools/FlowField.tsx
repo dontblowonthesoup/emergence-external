@@ -257,8 +257,7 @@ export default function FlowField({ controlsTarget = null }: FlowFieldProps = {}
       sliders={SLIDER_KEYS_SIMPLE.map(renderRow)}
       ink={ink}
       background={background}
-      inkFallback={INK}
-      bgFallback={BG}
+
       onInkChange={setInk}
       onBackgroundChange={setBackground}
       strokeTip="Color of the flow lines."

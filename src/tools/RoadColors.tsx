@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import snapshotUrl from "../data/sf-bay-roads.json?url";
 import AspectRatioControl from "../components/AspectRatioControl";
 import ExportButtons from "../components/ExportButtons";
 import ParamValueInput from "../components/ParamValueInput";
+import PaletteColorRow from "../components/PaletteColorRow";
 import RecordButton from "../components/RecordButton";
 import { useCanvasRecorder, useStopRecordWhenAnimatingEnds } from "../hooks/useCanvasRecorder";
 import { useCanvasDimensions } from "../hooks/useCanvasDimensions";
@@ -42,7 +43,7 @@ const wayKey = (w: RoadWay) =>
 const ROAD_BASE = 1000;
 const DEFAULT_ZOOM = 2.2;
 const DEFAULT_VIEW: View = { zoom: DEFAULT_ZOOM, panX: 0, panY: 0 };
-const BG = "#F8FFEE";
+const BG = "#EBFADC";
 
 // Pre-fetched SF / Bay Area roads, loaded by default so no Overpass call is
 // needed for the usual view. Generated into public/ as a static asset.
@@ -661,60 +662,12 @@ export default function RoadColors({
         <div className="specimen-tree__sliders">
           {slider("Line Weight", weight, 0.3, 3, 0.1, setWeight)}
         </div>
-        <label className="tool-param-row tool-color-row">
-          <span className="tool-param-row__label">Stroke Color</span>
-          <span className="tool-color-row__inputs">
-            <input
-              type="color"
-              className="tool-color-row__swatch"
-              value={safeColor(ink, INK)}
-              onChange={(e) => setInk(e.target.value)}
-            />
-            <input
-              type="text"
-              className="tool-color-row__hex"
-              value={ink}
-              spellCheck={false}
-              maxLength={7}
-              onChange={(e) =>
-                setInk(
-                  e.target.value.startsWith("#")
-                    ? e.target.value
-                    : `#${e.target.value}`,
-                )
-              }
-            />
-          </span>
-        </label>
+        <PaletteColorRow label="Stroke Color" value={ink} onChange={setInk} />
       </div>
 
       <div className="specimen-tree__group">
         <span className="specimen-tree__group-title">Background</span>
-        <label className="tool-param-row tool-color-row">
-          <span className="tool-param-row__label">Color</span>
-          <span className="tool-color-row__inputs">
-            <input
-              type="color"
-              className="tool-color-row__swatch"
-              value={safeColor(bg, BG)}
-              onChange={(e) => setBg(e.target.value)}
-            />
-            <input
-              type="text"
-              className="tool-color-row__hex"
-              value={bg}
-              spellCheck={false}
-              maxLength={7}
-              onChange={(e) =>
-                setBg(
-                  e.target.value.startsWith("#")
-                    ? e.target.value
-                    : `#${e.target.value}`,
-                )
-              }
-            />
-          </span>
-        </label>
+        <PaletteColorRow label="Color" value={bg} onChange={setBg} />
       </div>
 
       {data && (

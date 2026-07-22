@@ -1314,6 +1314,9 @@ button {
     (100vh - 120px) * var(--canvas-ar-w, 1) / var(--canvas-ar-h, 1)
   );
   aspect-ratio: var(--canvas-ar-w, 1) / var(--canvas-ar-h, 1);
+  /* min-height would beat aspect-ratio and un-square the box, stretching the
+     canvas (which fills it 100%/100%) — wide ratios must be free to be short. */
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -1428,6 +1431,44 @@ button {
 .tool-color-row__hex:focus-visible {
   outline: 2px solid var(--accent-soft);
   border-color: var(--accent);
+}
+
+/* Brand palette selector — fixed swatches instead of a free hex input, so
+   stroke/background colors always stay on brand. */
+.palette-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.palette-row__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.palette-row__swatch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.palette-row__swatch.is-active {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.palette-row__swatch:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+
+.palette-row__swatch.is-active:focus-visible {
+  outline-color: var(--accent);
 }
 
 .tool-text-input {

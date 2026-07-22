@@ -250,8 +250,7 @@ export default function Contour({ controlsTarget = null }: ContourProps = {}) {
       sliders={SLIDER_KEYS_SIMPLE.map(renderRow)}
       ink={ink}
       background={background}
-      inkFallback={INK}
-      bgFallback={BG}
+
       onInkChange={setInk}
       onBackgroundChange={setBackground}
       strokeTip="Color of the contour lines."

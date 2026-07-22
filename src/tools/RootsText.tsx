@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import AspectRatioControl from "../components/AspectRatioControl";
 import ExportButtons from "../components/ExportButtons";
 import ParamValueInput from "../components/ParamValueInput";
+import PaletteColorRow from "../components/PaletteColorRow";
 import RecordButton from "../components/RecordButton";
 import { useAnimProgress, useCanvasRecorder, useStopRecordWhenAnimatingEnds } from "../hooks/useCanvasRecorder";
 import { useCanvasDimensions } from "../hooks/useCanvasDimensions";
@@ -408,38 +409,6 @@ export default function RootsText({ controlsTarget = null }: RootsTextProps = {}
     );
   };
 
-  const colorRow = (
-    label: string,
-    value: string,
-    fallback: string,
-    onChange: (v: string) => void,
-  ) => (
-    <label className="tool-param-row tool-color-row">
-      <span className="tool-param-row__label">{label}</span>
-      <span className="tool-color-row__inputs">
-        <input
-          type="color"
-          className="tool-color-row__swatch"
-          value={safeColor(value, fallback)}
-          onChange={(e) => onChange(e.target.value)}
-          aria-label={`${label} swatch`}
-        />
-        <input
-          type="text"
-          className="tool-color-row__hex"
-          value={value}
-          spellCheck={false}
-          maxLength={7}
-          onChange={(e) => {
-            const v = e.target.value;
-            onChange(v.startsWith("#") ? v : `#${v}`);
-          }}
-          aria-label={`${label} hex code`}
-        />
-      </span>
-    </label>
-  );
-
   const controls = (
     <>
       <div className="specimen-tree__group">
@@ -536,8 +505,12 @@ export default function RootsText({ controlsTarget = null }: RootsTextProps = {}
       </div>
 
       <div className="specimen-tree__group">
-        {colorRow("Stroke Color", ink, INK, setInk)}
-        {colorRow("Background", background, BG, setBackground)}
+        <PaletteColorRow label="Stroke Color" value={ink} onChange={setInk} />
+        <PaletteColorRow
+          label="Background"
+          value={background}
+          onChange={setBackground}
+        />
       </div>
 
       <div className="specimen-tree__actions specimen-tree__actions--export rail-section">

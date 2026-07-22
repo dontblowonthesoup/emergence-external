@@ -371,8 +371,7 @@ export default function RootBrush({
       sliders={SLIDER_KEYS_SIMPLE.map(renderRow)}
       ink={ink}
       background={background}
-      inkFallback={INK}
-      bgFallback={BG}
+
       onInkChange={setInk}
       onBackgroundChange={setBackground}
       strokeTip="Color of the root strokes."

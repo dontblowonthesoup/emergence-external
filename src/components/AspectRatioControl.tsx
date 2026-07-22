@@ -121,7 +121,7 @@ export default function AspectRatioControl({
             className="export-menu__dim-input"
             min={320}
             max={4096}
-            step={2}
+            step={1}
             value={draftW}
             disabled={disabled}
             onChange={(e) => setDraftW(e.target.value)}
@@ -137,7 +137,7 @@ export default function AspectRatioControl({
             className="export-menu__dim-input"
             min={320}
             max={4096}
-            step={2}
+            step={1}
             value={draftH}
             disabled={disabled}
             onChange={(e) => setDraftH(e.target.value)}

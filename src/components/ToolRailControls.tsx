@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import AspectRatioControl from "./AspectRatioControl";
 import ExportButtons from "./ExportButtons";
+import PaletteColorRow from "./PaletteColorRow";
 import RecordButton from "./RecordButton";
 import type { CanvasSizeConfig } from "../tools/aspectRatio";
-import { safeColor } from "../tools/specimenTreeCore";
 
 const ResetIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -25,8 +25,6 @@ interface ToolRailControlsProps {
   sliders: ReactNode;
   ink: string;
   background: string;
-  inkFallback: string;
-  bgFallback: string;
   onInkChange: (value: string) => void;
   onBackgroundChange: (value: string) => void;
   strokeTip?: string;
@@ -60,8 +58,6 @@ export default function ToolRailControls({
   sliders,
   ink,
   background,
-  inkFallback,
-  bgFallback,
   onInkChange,
   onBackgroundChange,
   strokeTip = "Color of the stroke.",
@@ -81,39 +77,6 @@ export default function ToolRailControls({
   onReset,
 }: ToolRailControlsProps) {
   const showFade = typeof fade === "boolean" && onFadeChange;
-
-  const colorRow = (
-    label: string,
-    tip: string,
-    value: string,
-    fallback: string,
-    onChange: (v: string) => void,
-  ) => (
-    <label className="tool-param-row has-tip tool-color-row" data-tip={tip}>
-      <span className="tool-param-row__label">{label}</span>
-      <span className="tool-color-row__inputs">
-        <input
-          type="color"
-          className="tool-color-row__swatch"
-          value={safeColor(value, fallback)}
-          onChange={(e) => onChange(e.target.value)}
-          aria-label={`${label} swatch`}
-        />
-        <input
-          type="text"
-          className="tool-color-row__hex"
-          value={value}
-          spellCheck={false}
-          maxLength={7}
-          onChange={(e) => {
-            const v = e.target.value;
-            onChange(v.startsWith("#") ? v : `#${v}`);
-          }}
-          aria-label={`${label} hex code`}
-        />
-      </span>
-    </label>
-  );
 
   return (
     <>
@@ -159,14 +122,18 @@ export default function ToolRailControls({
       </div>
 
       <div className="specimen-tree__group">
-        {colorRow("Stroke Color", strokeTip, ink, inkFallback, onInkChange)}
-        {colorRow(
-          "Background",
-          backgroundTip,
-          background,
-          bgFallback,
-          onBackgroundChange,
-        )}
+        <PaletteColorRow
+          label="Stroke Color"
+          tip={strokeTip}
+          value={ink}
+          onChange={onInkChange}
+        />
+        <PaletteColorRow
+          label="Background"
+          tip={backgroundTip}
+          value={background}
+          onChange={onBackgroundChange}
+        />
       </div>
 
       <div className="specimen-tree__actions specimen-tree__actions--export rail-section">

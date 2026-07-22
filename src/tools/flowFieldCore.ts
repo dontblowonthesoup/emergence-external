@@ -5,7 +5,7 @@ import { makeFade, strokeFaded, svgFadedPaths } from "./dissolveFade";
 export const FW = 680;
 export const FH = 580;
 export const INK = "#00280F";
-export const BG = "#F8FFEE";
+export const BG = "#EBFADC";
 
 const TAU = Math.PI * 2;
 

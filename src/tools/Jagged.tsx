@@ -230,8 +230,7 @@ export default function Jagged({ controlsTarget = null }: JaggedProps = {}) {
       sliders={SLIDER_KEYS_SIMPLE_JAGGED.map(renderRow)}
       ink={ink}
       background={background}
-      inkFallback={INK}
-      bgFallback={BG}
+
       onInkChange={setInk}
       onBackgroundChange={setBackground}
       strokeTip="Color of the flow lines."

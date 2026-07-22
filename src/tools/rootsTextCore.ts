@@ -15,7 +15,7 @@ export const TW = 900;
 export const TH = 560;
 // Light ground, dark linework — black-on-white per the studio's viz aesthetic.
 export const INK = "#00280F";
-export const BG = "#F8FFEE";
+export const BG = "#EBFADC";
 
 // A brush sets how a growing tip TURNS and how the roots are DRAWN — the same
 // brushes the Root System family uses.
@@ -734,6 +734,13 @@ export function growRootsText(
   const invMax = maxPath > 0 ? 1 / maxPath : 0;
   const schedRng = mulberry32((p.seed ^ 0x6d2b79f5) >>> 0);
 
+  // "Line weight" (`thickness`) is the single width control exposed in the UI.
+  // Finer roots track it directly; this factor propagates the same relative
+  // change to the otherwise-fixed widths (leader taproot, engineered trace
+  // tiers, hairs) so the slider scales EVERY line evenly.
+  const lineScale = p.thickness / DEFAULT_ROOTS_TEXT.thickness;
+  const engineered = brush === "engineered";
+
   const edges: RootEdge[] = [];
   for (let i = 0; i < N; i++) {
     const par = parent[i];
@@ -742,9 +749,13 @@ export function growRootsText(
     const jitterStart = (schedRng() - 0.5) * 0.04;
     const start = Math.max(0, pathLen[par] * invMax + jitterStart);
     const end = Math.min(1, pathLen[i] * invMax + (schedRng()) * 0.05);
-    const w2 = main
-      ? p.taprootThickness * (1.05 - pathLen[i] * invMax * 0.25)
-      : p.thickness * Math.pow(size[i], p.taper);
+    // Widths are baked into the edges (engineered included) so exports scale
+    // them like every other stroke instead of re-applying fixed constants.
+    const w2 = engineered
+      ? ENGINEERED_W[main ? "taproot" : "lateral"] * lineScale
+      : main
+        ? p.taprootThickness * lineScale * (1.05 - pathLen[i] * invMax * 0.25)
+        : p.thickness * Math.pow(size[i], p.taper);
     edges.push({
       x1: px[par],
       y1: py[par],
@@ -791,7 +802,7 @@ export function growRootsText(
           y1: hy,
           x2: nxp,
           y2: nyp,
-          w: 0.35,
+          w: 0.35 * lineScale,
           order: hStart,
           orderEnd: hairT,
           tier: "hair",
@@ -888,12 +899,10 @@ export function drawRootsText(
 
   ctx.strokeStyle = ink;
   ctx.globalAlpha = 0.42;
-  for (const e of result.hairs)
-    strokeRootSegment(ctx, e, progress, engineered ? ENGINEERED_W.hair : undefined);
+  for (const e of result.hairs) strokeRootSegment(ctx, e, progress);
 
   ctx.globalAlpha = 1;
-  for (const e of result.edges)
-    strokeRootSegment(ctx, e, progress, engineered ? ENGINEERED_W[e.tier] : undefined);
+  for (const e of result.edges) strokeRootSegment(ctx, e, progress);
   ctx.globalAlpha = 1;
 
   // The copy emerges as the roots close in — fades up over the last third.
@@ -921,7 +930,7 @@ export function buildRootsTextSVG(
   );
   for (const e of result.hairs) {
     parts.push(
-      `<line x1="${f(e.x1)}" y1="${f(e.y1)}" x2="${f(e.x2)}" y2="${f(e.y2)}" stroke-width="${f(engineered ? ENGINEERED_W.hair : e.w)}"/>`,
+      `<line x1="${f(e.x1)}" y1="${f(e.y1)}" x2="${f(e.x2)}" y2="${f(e.y2)}" stroke-width="${f(e.w)}"/>`,
     );
   }
   parts.push(`</g>`);
@@ -931,7 +940,7 @@ export function buildRootsTextSVG(
   );
   for (const e of result.edges) {
     parts.push(
-      `<line x1="${f(e.x1)}" y1="${f(e.y1)}" x2="${f(e.x2)}" y2="${f(e.y2)}" stroke-width="${f(engineered ? ENGINEERED_W[e.tier] : e.w)}"/>`,
+      `<line x1="${f(e.x1)}" y1="${f(e.y1)}" x2="${f(e.x2)}" y2="${f(e.y2)}" stroke-width="${f(e.w)}"/>`,
     );
   }
   parts.push(`</g>`);

@@ -7,7 +7,7 @@ export const RW = 640;
 export const RH = 700;
 // Default palette: deep forest linework on a pale ground.
 export const INK = "#00280F";
-export const BG = "#F8FFEE";
+export const BG = "#EBFADC";
 
 /**
  * Root system. A descendant of the Vascular space-colonization engine, inverted
@@ -1090,7 +1090,7 @@ export function growRoots(
           y1: hy,
           x2: nxp,
           y2: nyp,
-          w: 0.35,
+          w: 0.35 * lineScale,
           order: hStart,
           orderEnd: hairT,
           tier: "hair",
